@@ -1,147 +1,98 @@
-import { useEffect, useState } from "react";
-import API from "../api";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import './Pages.css';
 
-function Dashboard() {
+const Dashboard = () => {
   const [notes, setNotes] = useState([]);
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [editNoteId, setEditNoteId] = useState(null);
-  const navigate = useNavigate();
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+  const [editIndex, setEditIndex] = useState(null);
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      alert("Please login");
-      return navigate("/login");
-    }
-
-    fetchNotes(token);
-  }, []);
-
-  const fetchNotes = async (token) => {
-    try {
-      const res = await API.get("/notes", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setNotes(res.data);
-    } catch (err) {
-      console.error(err);
-    }
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    window.location.href = '/login';
   };
 
-  const handleAddOrUpdate = async (e) => {
-    e.preventDefault();
-    const token = localStorage.getItem("token");
+  const handleAddNote = () => {
+    if (title && content) {
+      const newNote = { title, content };
 
-    try {
-      if (editNoteId) {
-        // update note
-        const res = await API.put(
-          `/notes/${editNoteId}`,
-          { title, content },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        const updatedNotes = notes.map((note) =>
-          note._id === editNoteId ? res.data : note
-        );
+      if (editIndex !== null) {
+        // Update note
+        const updatedNotes = [...notes];
+        updatedNotes[editIndex] = newNote;
         setNotes(updatedNotes);
-        setEditNoteId(null);
+        setEditIndex(null);
       } else {
-        // add new note
-        const res = await API.post(
-          "/notes",
-          { title, content },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        setNotes([...notes, res.data]);
+        // Add new note
+        setNotes([...notes, newNote]);
       }
 
-      setTitle("");
-      setContent("");
-    } catch (err) {
-      alert("Error saving note");
+      // Clear form
+      setTitle('');
+      setContent('');
     }
   };
 
-  const handleEdit = (note) => {
-    setEditNoteId(note._id);
-    setTitle(note.title);
-    setContent(note.content);
+  const handleEdit = (index) => {
+    setEditIndex(index);
+    setTitle(notes[index].title);
+    setContent(notes[index].content);
   };
 
-  const handleDelete = async (id) => {
-    const token = localStorage.getItem("token");
-    try {
-      await API.delete(`/notes/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setNotes(notes.filter((note) => note._id !== id));
-    } catch (err) {
-      alert("Error deleting note");
+  const handleDelete = (index) => {
+    const updatedNotes = notes.filter((_, i) => i !== index);
+    setNotes(updatedNotes);
+    if (editIndex === index) {
+      setTitle('');
+      setContent('');
+      setEditIndex(null);
     }
   };
 
   return (
     <div className="dashboard">
-      <h2>📝 {editNoteId ? "Edit Note" : "Your Notes"}</h2>
+      {/* <div className="dashboard-header">
+        <button className="logout-btn" onClick={handleLogout}>Logout</button>
+      </div> */}
 
-      <form onSubmit={handleAddOrUpdate}>
+      <h2>Your Notes</h2>
+
+      <div className="note-form">
         <input
-          placeholder="Title"
+          type="text"
+          placeholder="Note Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          required
         />
         <textarea
-          placeholder="Content"
+          placeholder="Note Content"
+          rows={4}
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          required
         />
-        <button type="submit">
-          {editNoteId ? "Update Note" : "Add Note"}
+        <button onClick={handleAddNote}>
+          {editIndex !== null ? 'Update Note' : 'Add Note'}
         </button>
-      </form>
+      </div>
 
-      <div style={{ marginTop: "30px" }}>
-        {notes.length === 0 && <p>No notes yet.</p>}
-        {notes.map((note) => (
-          <div key={note._id} style={noteStyle}>
-            <h3>{note.title}</h3>
-            <p>{note.content}</p>
-            <button
-              onClick={() => handleEdit(note)}
-              style={{ marginRight: "10px" }}
-            >
-              Edit
-            </button>
-            <button
-              onClick={() => handleDelete(note._id)}
-              style={{
-                background: "red",
-                color: "#fff",
-                border: "none",
-                padding: "6px 12px",
-                borderRadius: "6px",
-                cursor: "pointer",
-              }}
-            >
-              Delete
-            </button>
-          </div>
-        ))}
+      <div className="note-list">
+        {notes.length === 0 ? (
+          <p>No notes yet.</p>
+        ) : (
+          notes.map((note, index) => (
+            <div className="note-card" key={index}>
+              <h3>{note.title}</h3>
+              <p>{note.content}</p>
+              <div className="note-actions">
+                <button onClick={() => handleEdit(index)}>Edit</button>
+                <button className="delete-btn" onClick={() => handleDelete(index)}>Delete</button>
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
-}
-
-const noteStyle = {
-  background: "#fff",
-  padding: "15px",
-  borderRadius: "10px",
-  marginBottom: "15px",
-  boxShadow: "0 0 10px rgba(0,0,0,0.1)",
 };
 
 export default Dashboard;

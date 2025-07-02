@@ -1,30 +1,29 @@
-import { Routes, Route } from "react-router-dom";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Dashboard from "./pages/Dashboard";
-import Navbar from "./components/Navbar";
-import ProtectedRoute from "./components/ProtectedRoute";
-import Landing from "./pages/Landing"; // 👈 NEW
+import React, { useState } from 'react';
+import { Routes, Route } from 'react-router-dom';
 
-function App() {
+import Landing from './pages/Landing';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Dashboard from './pages/Dashboard';
+import Navbar from './components/Navbar';
+
+import './App.css';
+
+const App = () => {
+  const [darkMode, setDarkMode] = useState(false);
+
   return (
-    <>
-      <Navbar />
+    <div className={darkMode ? 'app dark' : 'app'}>
+      <Navbar darkMode={darkMode} setDarkMode={setDarkMode} />
+
       <Routes>
-        <Route path="/" element={<Landing />} /> {/* 👈 Public Landing Page */}
+        <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
-    </>
+    </div>
   );
-}
+};
 
 export default App;

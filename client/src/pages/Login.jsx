@@ -1,32 +1,55 @@
-import { useState } from "react";
-import API from "../api";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import './Pages.css';
 
-function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+const Login = () => {
   const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-  const handleLogin = async (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
-    try {
-      const res = await API.post("/users/login", { email, password });
-      alert("Login successful!");
-      localStorage.setItem("token", res.data.token);
-      navigate("/");
-    } catch (err) {
-      alert("Login failed. Please check credentials.");
+
+    // Simulate login success
+    if (email && password) {
+      localStorage.setItem('token', 'sample_token');
+      navigate('/dashboard');
+    } else {
+      alert('Please enter both email and password.');
     }
   };
 
   return (
-    <form onSubmit={handleLogin}>
+    <div className="auth-form">
       <h2>Login</h2>
-      <input placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
-      <input placeholder="Password" type="password" value={password} onChange={e => setPassword(e.target.value)} />
-      <button type="submit">Login</button>
-    </form>
+      <form onSubmit={handleLogin}>
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+
+        <button type="submit">Login</button>
+      </form>
+
+      <div className="form-extra">
+        <Link to="#">Forgot Password?</Link>
+        <p>
+          Not registered? <Link to="/register" className="register-link">Register now</Link>
+        </p>
+      </div>
+    </div>
   );
-}
+};
 
 export default Login;

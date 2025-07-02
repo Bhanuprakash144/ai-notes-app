@@ -1,33 +1,38 @@
-import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import "./Landing.css";
+import React, { useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
+import './Pages.css';
 
-function Landing() {
+const Landing = () => {
   const navigate = useNavigate();
 
+  useEffect(() => {
+    AOS.init({ duration: 1000 });
+  }, []);
+
   return (
-    <div className="landing-container">
-      <h1 className="landing-title">🧠 AI Notes</h1>
+    <div className="landing">
+      <h2 data-aos="fade-down">Welcome to AI Notes 🧠</h2>
+      <p data-aos="fade-up">
+        Organize your thoughts, capture ideas, and manage tasks smartly with your personal AI-powered notepad.
+      </p>
 
-      <motion.p
-        className="landing-subtitle"
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5, duration: 0.8 }}
-      >
-        Your smart, cloud-based note-taking assistant. Powered by AI. Built by Bhanu.
-      </motion.p>
+      <div data-aos="zoom-in" className="get-started">
+        <button onClick={() => navigate('/login')}>Get Started</button>
 
-      <motion.button
-        className="landing-btn"
-        onClick={() => navigate("/login")}
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.95 }}
-      >
-        🚀 Get Started
-      </motion.button>
+        <p>
+          Not registered?{' '}
+          <Link to="/register" className="register-link">Register now</Link>
+        </p>
+      </div>
+
+      <div className="landing-images" data-aos="fade-up">
+        <img src="/dashboard-sample.png" alt="Dashboard Preview" />
+        <img src="/edit-note-sample.png" alt="Edit Notepad" />
+      </div>
     </div>
   );
-}
+};
 
 export default Landing;

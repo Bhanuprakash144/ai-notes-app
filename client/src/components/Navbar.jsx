@@ -1,36 +1,39 @@
-import { Link, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
+import React from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import './Components.css';
 
-function Navbar() {
+const Navbar = ({ darkMode, setDarkMode }) => {
+  const token = localStorage.getItem('token');
   const location = useLocation();
-  const [darkMode, setDarkMode] = useState(false);
-
-  useEffect(() => {
-    document.body.className = darkMode ? "dark" : "";
-  }, [darkMode]);
-
-  if (location.pathname === "/") return null; // 👈 Hide on landing page
+  const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    window.location.href = "/login";
+    localStorage.removeItem('token');
+    navigate('/login');
   };
 
   return (
-    <nav style={navStyle}>
+    <nav className="navbar">
+      <h1>🧠 AI Notes</h1>
+
       <div>
-        <Link to="/">AI Notes</Link>
-      </div>
-      <div>
-        <button onClick={() => setDarkMode(!darkMode)} style={toggleBtnStyle}>
-          {darkMode ? "☀️ Light" : "🌙 Dark"}
-        </button>
-        <button onClick={handleLogout} style={logoutBtnStyle}>
-          Logout
+        {token ? (
+          <button onClick={handleLogout}>🚪 Logout</button>
+        ) : (
+          location.pathname === '/' && (
+            <>
+              <Link to="/login">Login</Link>
+              <Link to="/register">Register</Link>
+            </>
+          )
+        )}
+
+        <button onClick={() => setDarkMode(!darkMode)}>
+          {darkMode ? '☀️ Light' : '🌙 Dark'}
         </button>
       </div>
     </nav>
   );
-}
+};
 
-// ...styles remain the same
+export default Navbar;
