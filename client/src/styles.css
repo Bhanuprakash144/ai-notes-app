@@ -1,0 +1,42 @@
+/* Light mode (default) */
+body {
+  background-color: #ffffff;
+  color: #0D3E7E;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+input,
+textarea {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  color: #0D3E7E;
+  border-radius: 6px;
+  padding: 10px;
+}
+
+button {
+  background-color: #0D3E7E;
+  color: #FBB040;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 16px;
+  cursor: pointer;
+}
+
+/* Dark Mode */
+body.dark {
+  background-color: #0D3E7E;
+  color: #ffffff;
+}
+
+body.dark input,
+body.dark textarea {
+  background-color: #1e1e1e;
+  color: #fff;
+  border: 1px solid #ccc;
+}
+
+body.dark button {
+  background-color: #FBB040;
+  color: #0D3E7E;
+}
