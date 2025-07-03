@@ -3,6 +3,9 @@ import { useNavigate, Link } from 'react-router-dom';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import './Pages.css';
+import dashboardImg from '../assets/dashboard.png';
+import image from '../assets/image.jpg';
+
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -28,8 +31,8 @@ const Landing = () => {
       </div>
 
       <div className="landing-images" data-aos="fade-up">
-        <img src="/dashboard-sample.png" alt="Dashboard Preview" />
-        <img src="/edit-note-sample.png" alt="Edit Notepad" />
+        <img src={dashboardImg} alt="Dashboard Preview" />
+        <img src={image} alt="Edit Notepad" />
       </div>
     </div>
   );
